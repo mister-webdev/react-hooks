@@ -1,23 +1,16 @@
 const useTimeout = (callback, delay) => {
-  const savedCallback = useRef()
+  const savedCallback = useRef(null)
+  savedCallback.current = callback
 
-  useEffect(() => {
-    savedCallback.current = callback
-  }, [callback])
-
-  useEffect(() => {
-    function tick() {
-      savedCallback.current()
-    }
-    if(delay !== null) {
-      let id = setTimeout(tick, delay)
+  useEffect(
+    () => {
+      if (delay !== null) return
+      const id = setTimeout(() => savedCallback.current(), delay)
       return () => clearTimeout(id)
-    }
   }, [delay])
 }
 
 //Example
-
 const Timer = () => {
   const [seconds, setSeconds] = useState(0)
   useTimeout(() => {
