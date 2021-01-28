@@ -1,25 +1,31 @@
 const useInterval = (callback, delay) => {
-  const savedCallback = useRef(null)
-  savedCallback.current = callback
+  const savedCallback = useRef()
 
-  useEffect(
-    () => {
-      if (delay !== null) return
-      const id = setInterval(() => savedCallback.current(), delay)
+  useEffect(() => {
+    savedCallback.current = callback
+  }, [callback])
+
+  useEffect(() => {
+    function tick() {
+      savedCallback.current()
+    }
+    if (delay !== null) {
+      let id = setInterval(tick, delay)
       return () => clearInterval(id)
-    }, [delay])
+    }
+  }, [delay])
 }
 
 /*
 Example
 */
 
-const ResourceCounter = () => {
-  const [resources, setResources] = useState(0)
+const Counter = () => {
+  const [seconds, setSeconds] = useState(0);
   useInterval(() => {
-    setResources(resources + 1)
+    setSeconds(seconds + 1)
   }, 1500)
   return (
-    <div>{resources}</div>
+    <div>{seconds}</div>
   )
 }
