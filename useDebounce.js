@@ -1,32 +1,18 @@
-/*
-* Debounces the given value.
-*/
+import { useCallback, useEffect, useState } from "react"
 
-const useDebounce = (value, delay) => {
-  const [debouncedValue, setDebouncedValue] = useState(value)
+const useDebounce = (effect, delay, deps) => {
+  const callback = useCallback(effect, deps)
 
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value)
-    }, delay)
+    const handler = setTimeout(() => callback(), delay)
 
     return () => clearTimeout(handler)
-  }, [value])
-
-  return debouncedValue
+  }, [callback, delay])
 }
 
-//Example
-const Counter = () => {
+// usage
+export const App = () => {
   const [value, setValue] = useState(0)
-  const lastValue = useDebounce(value, 500)
-
-  return (
-    <div>
-      <p>
-        Current: {value} - Debounced: {lastValue}
-      </p>
-      <button onClick={() => setValue(value + 1)}>Increment</button>
-    </div>
-  )
+  useDebounce(() => console.log(value), 1000, [value])
+  return <button onClick={() => setValue(value + 1)}>{value}</button>
 }
